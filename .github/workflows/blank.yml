@@ -9,6 +9,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v1
+    - name: Install nasm
+      run: sudo apt-get install nasm
     - name: Clean
       run: make clean
     - name: Build disk.img
