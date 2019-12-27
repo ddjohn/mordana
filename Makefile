@@ -1,7 +1,8 @@
-CC   = gcc
-NASM = nasm
+CC     = gcc
+LD     = ld
+NASM   = nasm
 CFLAGS = -g -m32 -ffreestanding -Ikernel -fno-pie -fno-stack-protector 
-OUT  = out
+OUT    = out
 
 ############
 # ALL
@@ -38,7 +39,7 @@ disk.img: $(OUT)/bootloader.bin $(OUT)/kernel.bin
 $(OUT)/kernel.bin: $(OUT)/entry.o $(OUT)/string.o $(OUT)/kernel.o
 	@echo "LD    " $@
 	@mkdir -p $(OUT)
-	@ld -Ttext 0x1000 --oformat binary -m elf_i386 -o $@ $^
+	@$(LD) -Ttext 0x1000 -T link.ld --oformat binary -m elf_i386 -o $@ $^
 
 $(OUT)/entry.o: kernel/entry.asm
 	@echo "NASM  " $@
