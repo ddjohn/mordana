@@ -5,11 +5,25 @@
 
 #define BUF_SIZE 256
 
+void * __gxx_personality_v0=0;
+void * _Unwind_Resume =0;
+
+Kernel::Kernel() {
+	printString("Kernel");
+}
+
+
+Kernel::~Kernel() {
+	printString("~Kernel");
+}
+
 void main() {
 	printString("\n");
 	printString("\n");
 	printString("Starting kernel!\n");
 	printString("\n");
+
+	Kernel k;
 
 	while(true) {
 		char buf[BUF_SIZE];
@@ -28,7 +42,7 @@ void main() {
 		}
 		buf[len] = 0;
 
-		if(strcmp(buf, "EXIT") == 0) {
+		if(strcmp(buf, "exit") == 0) {
 			break;
 		} 
 		else {
@@ -68,14 +82,14 @@ void printChar(char chr) {
 	}
 }
 
-void printString(char* message) {
+void printString(const char* message) {
 	unsigned char* videomem = (unsigned char*)0xb8000;
 
 	if(cursor.y >= 24) {
 		memmove(videomem, videomem + 160, 160 * 24);
 	}
 
-	for(unsigned int i = 0; i < strlen(message); i++) {
+	for(unsigned int i = 0; i < strlen((char*)message); i++) {
 		printChar(message[i]);
 	}
 }
@@ -105,6 +119,10 @@ void handleAsciiCode(char asciicode) {
 }
 
 void handleScanCode(unsigned char scancode) {
+
+	//printChar(' ');
+	//printHex(scancode);
+	//printChar(' ');
 	static bool done = false;
 	if(0xF0 == scancode) {
 		done = true;
@@ -116,7 +134,7 @@ void handleScanCode(unsigned char scancode) {
 	}
 
 	if(done == false) {
-		char asciicode = scancode2ascii[scancode];
+		char asciicode = keyboard[scancode];
 		if (0 != asciicode) {
 			handleAsciiCode(asciicode);
 		}

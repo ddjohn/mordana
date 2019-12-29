@@ -17,8 +17,8 @@ int strcmp(const char* s1, const char* s2) {
 }
 
 void* memcpy(void* dest, const void* src, size_t n) {
-	char*  dest_c = dest;
-	const char*  src_c = src;
+	char* dest_c = (char*)dest;
+	const char* src_c = (char*)src;
 
 	for(size_t i = 0; i < n; ++i) {
 		dest_c[i] = src_c[i];
@@ -31,8 +31,8 @@ void* memmove(void* dest, const void* src, size_t n) {
 	if(src > dest) {
 		return memcpy(dest, src, n);
 	} else {
-		char* dest_c = dest;
-		const char* src_c = src;
+		char* dest_c = (char*)dest;
+		const char* src_c = (char*)src;
 
 		// We can't do >= 0 because unsigned
 		for(size_t i = n; i > 0; --i) {

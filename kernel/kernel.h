@@ -1,35 +1,33 @@
 #ifndef KERNEL_H
 #define KERNEL_H
 
-static const char scancode2ascii[256] = {
-	[0x1C] = 'A',
-	[0x32] = 'B',
-	[0x21] = 'C',
-	[0x23] = 'D',
-	[0x24] = 'E',
-	[0x2B] = 'F',
-	[0x34] = 'G',
-	[0x33] = 'H',
-	[0x43] = 'I',
-	[0x3B] = 'J',
-	[0x42] = 'K',
-	[0x4B] = 'L',
-	[0x3A] = 'M',
-	[0x31] = 'N',
-	[0x44] = 'O',
-	[0x4D] = 'P',
-	[0x15] = 'Q',
-	[0x2D] = 'R',
-	[0x1B] = 'S',
-	[0x2C] = 'T',
-	[0x3C] = 'U',
-	[0x2A] = 'V',
-	[0x1D] = 'W',
-	[0x22] = 'X',
-	[0x35] = 'Y',
-	[0x1A] = 'Z',
-	[0x5A] = '\n',
+class Kernel {
+	public:
+		Kernel();
+		~Kernel();
+
+	private:
 };
+
+static char keyboard[] =
+//   0123456789abcdef 
+	"................" //0x0x
+	".....q1...zsaw2." //0x1x
+	".cxde43...vftr5." //0x2x
+	".nbhgy6...mju78." //0x3x
+	"..kio09....l.p.." //0x4x
+	"..........\n....." //0x5x
+	"................" //0x6x
+	"................" //0x7x
+	"................" //0x8x
+	"................" //0x9x
+	"................" //0xax
+	"................" //0xbx
+	"................" //0xcx
+	"................" //0xdx
+	"................" //0xex
+	"................" //0xfx
+	;
 
 #define GETCHAR_WAITING -1337
 #define GETCHAR_NOTWAITING -1234
@@ -44,9 +42,9 @@ int kernel_getchar();
 
 void printCharAt(char chr, unsigned int color, unsigned int x, unsigned int y);
 void printChar(char chr);
-void printString(char *str);
-void printHex(unsigned int hex);
+extern "C" void printString(const char *str);
+extern "C" void printHex(unsigned int hex);
 void handleAsciiCode(char asciicode);
-void handleScanCode(unsigned char scancode);
+extern "C" void handleScanCode(unsigned char scancode);
 
 #endif //KERNEL_H

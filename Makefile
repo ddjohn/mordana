@@ -1,4 +1,4 @@
-CC     = gcc
+CC     = g++
 LD     = ld
 NASM   = nasm
 CFLAGS = -g -m32 -ffreestanding -Ikernel -fno-pie -fno-stack-protector 
