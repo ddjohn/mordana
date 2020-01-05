@@ -4,6 +4,9 @@ NASM   = nasm
 CFLAGS = -g -m32 -ffreestanding -Ikernel -fno-pie -fno-stack-protector 
 OUT    = out
 
+LOW_LEVEL  = $(OUT)/string.o $(OUT)/print.o $(OUT)/keys.o 
+HIGH_LEVEL = $(OUT)/ddprint.o $(OUT)/ddstring.o $(OUT)/ddobject.o
+
 ############
 # ALL
 #
@@ -18,7 +21,7 @@ debug: disk.img
 		-ex 'target remote localhost:1234' \
 		-ex 'layout src' \
 		-ex 'layout reg' \
-		-ex 'break kmain' \
+		-ex 'break main' \
 		-ex 'continue'
 ############
 
@@ -36,22 +39,23 @@ disk.img: $(OUT)/bootloader.bin $(OUT)/kernel.bin
 ############
 # KERNEL
 #
-$(OUT)/kernel.bin: $(OUT)/entry.o $(OUT)/string.o $(OUT)/kernel.o
+$(OUT)/kernel.bin: $(OUT)/entry.o $(LOW_LEVEL) $(HIGH_LEVEL) $(OUT)/kernel.o
 	@echo "LD    " $@
 	@mkdir -p $(OUT)
 	@$(LD) -Ttext 0x1000 -T link.ld --oformat binary -m elf_i386 -o $@ $^
+	@ls -al $@
+
+$(OUT)/%.o: kernel/%.cpp
+	@echo "CC    " $@
+	@mkdir -p $(OUT)
+	@$(CC) -c $^ -o $@ $(CFLAGS)
 
 $(OUT)/entry.o: kernel/entry.asm
 	@echo "NASM  " $@
 	@mkdir -p $(OUT)
 	@$(NASM) $^ -f elf -o $@
 
-$(OUT)/kernel.o: kernel/kernel.c | kernel/kernel.h
-	@echo "CC    " $@
-	@mkdir -p $(OUT)
-	@$(CC) -c $^ -o $@ $(CFLAGS)
-
-$(OUT)/string.o: kernel/string.c | kernel/string.h
+$(OUT)/%.o: kernel/%.c
 	@echo "CC    " $@
 	@mkdir -p $(OUT)
 	@$(CC) -c $^ -o $@ $(CFLAGS)
@@ -64,14 +68,15 @@ $(OUT)/bootloader.bin: bootloader/bootloader.asm
 	@echo "NASM  " $@
 	@mkdir -p $(OUT)
 	@$(NASM) $^ -f bin -o $@
+	@ls -al $@
 ############
 
 ############
 # CLEAN
 #
 clean:
-	@echo "CLEAN  " $(OUT)/kernel.bin $(OUT)/entry.o $(OUT)/string.o $(OUT)/kernel.o
-	@rm -f $(OUT)/kernel.bin $(OUT)/entry.o $(OUT)/string.o $(OUT)/kernel.o
+	@echo "CLEAN  " $(OUT)/kernel.bin $(OUT)/entry.o $(OUT)/kernel.o $(LOW_LEVEL) $(HIGH_LEVEL)
+	@rm -f  $(OUT)/kernel.bin $(OUT)/entry.o $(OUT)/kernel.o $(LOW_LEVEL) $(HIGH_LEVEL)
 	@echo "CLEAN  " $(OUT)/bootloader.bin
 	@rm -f $(OUT)/bootloader.bin
 	@echo "CLEAN  " disk.img
