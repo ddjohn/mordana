@@ -4,8 +4,8 @@ NASM   = nasm
 CFLAGS = -g -m32 -ffreestanding -Ikernel -fno-pie -fno-stack-protector 
 OUT    = out
 
-LOW_LEVEL  = $(OUT)/string.o $(OUT)/print.o $(OUT)/keys.o 
-HIGH_LEVEL = $(OUT)/ddprint.o $(OUT)/ddstring.o $(OUT)/ddobject.o
+LOW_LEVEL  = $(OUT)/string.o $(OUT)/print.o $(OUT)/keys.o
+HIGH_LEVEL = $(OUT)/ddprint.o $(OUT)/ddstring.o $(OUT)/ddobject.o $(OUT)/ddtrace.o
 
 ############
 # ALL
